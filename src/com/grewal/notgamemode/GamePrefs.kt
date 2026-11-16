@@ -28,8 +28,6 @@ class GamePrefs(context: Context) {
 
     fun isEnabled(pkg: String) = prefs.getBoolean(enabledKey(pkg), false)
 
-    fun isSuperReport(pkg: String) = prefs.getBoolean(superKey(pkg), true)
-
     fun tuningValue(pkg: String, mode: Int, default: Int) =
         prefs.getInt(tuneKey(pkg, mode), default)
 
@@ -43,8 +41,6 @@ class GamePrefs(context: Context) {
         private const val KEY_CUSTOM = "custom_packages"
 
         fun enabledKey(pkg: String) = "enabled_$pkg"
-
-        fun superKey(pkg: String) = "super_$pkg"
 
         fun tuneKey(pkg: String, mode: Int) = "tune_${pkg}_$mode"
 

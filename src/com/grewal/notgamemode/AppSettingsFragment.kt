@@ -21,7 +21,6 @@ class AppSettingsFragment : SettingsBasePreferenceFragment() {
 
     private lateinit var pkg: String
     private val manualSliders = mutableListOf<Preference>()
-    private var superSwitch: SwitchPreferenceCompat? = null
     private var expertSwitch: SwitchPreferenceCompat? = null
     private var presetSlider: SliderPreference? = null
 
@@ -71,16 +70,6 @@ class AppSettingsFragment : SettingsBasePreferenceFragment() {
                 setDefaultValue(false)
             }
         screen.addPreference(masterSwitch)
-
-        superSwitch =
-            SwitchPreferenceCompat(context).apply {
-                key = GamePrefs.superKey(pkg)
-                title = getString(R.string.super_report_title)
-                summary = getString(R.string.super_report_summary)
-                setDefaultValue(true)
-                isIconSpaceReserved = false
-            }
-        screen.addPreference(superSwitch!!)
 
         val tuning =
             PreferenceCategory(context).apply { title = getString(R.string.tuning_category_title) }
@@ -140,7 +129,6 @@ class AppSettingsFragment : SettingsBasePreferenceFragment() {
 
         fun updateEnabled() {
 
-            superSwitch?.isEnabled = gameEnabled
             expertSwitch?.isEnabled = gameEnabled
             presetSlider?.isEnabled = gameEnabled && expertOn
             manualSliders.forEach { it.isEnabled = gameEnabled && !expertOn }
@@ -173,7 +161,6 @@ class AppSettingsFragment : SettingsBasePreferenceFragment() {
     private fun resetDefaults() {
         val editor = preferenceManager.sharedPreferences?.edit() ?: return
         editor.remove(GamePrefs.enabledKey(pkg))
-        editor.remove(GamePrefs.superKey(pkg))
         editor.remove(GamePrefs.expertKey(pkg))
         editor.remove(GamePrefs.expertPresetKey(pkg))
         TouchFeatureManager.TUNING_RANGES.keys.forEach { editor.remove(GamePrefs.tuneKey(pkg, it)) }

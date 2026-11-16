@@ -1,4 +1,10 @@
-allow platform_app hal_touchfeature_xiaomi_service:service_manager find;
+#
+# SPDX-FileCopyrightText: The LineageOS Project
+# SPDX-License-Identifier: Apache-2.0
+#
+
+# HIDL 1.0 touchfeature service provided by the device
+allow platform_app hal_touchfeature_xiaomi_hwservice:hwservice_manager find;
 binder_call(platform_app, hal_touchfeature_xiaomi_default)
-allow priv_app hal_touchfeature_xiaomi_service:service_manager find;
+allow priv_app hal_touchfeature_xiaomi_hwservice:hwservice_manager find;
 binder_call(priv_app, hal_touchfeature_xiaomi_default)

@@ -30,10 +30,6 @@
 
     <string name="touch_test_title">Test polling rate</string>
     <string name="touch_test_game_mode">Game mode</string>
-    <string name="touch_test_super_report">Super report</string>
-
-    <string name="super_report_title">Super report rate</string>
-    <string name="super_report_summary">480 Hz super-resolution reporting (game mode is 240 Hz)</string>
 
     <string name="tuning_category_title">Touch tuning (game mode)</string>
     <string name="tuning_unavailable_summary">Touch tuning is not available on this panel.</string>

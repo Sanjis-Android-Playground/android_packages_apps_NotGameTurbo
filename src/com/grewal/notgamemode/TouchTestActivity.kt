@@ -36,15 +36,6 @@ class TouchTestActivity : Activity() {
                 }
             }
         )
-        controls.addView(
-            Switch(this).apply {
-                text = getString(R.string.touch_test_super_report)
-                setTextColor(Color.WHITE)
-                setOnCheckedChangeListener { _, checked ->
-                    TouchFeatureManager.setSuperReport(checked)
-                }
-            }
-        )
         root.addView(
             controls,
             FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, Gravity.TOP or Gravity.END).apply {
@@ -66,7 +57,6 @@ class TouchTestActivity : Activity() {
         super.onPause()
 
         GameModeService.manualOverride = false
-        TouchFeatureManager.setSuperReport(false)
         TouchFeatureManager.setGameMode(false)
     }
 }

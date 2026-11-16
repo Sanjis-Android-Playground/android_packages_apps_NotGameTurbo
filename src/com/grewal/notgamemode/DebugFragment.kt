@@ -27,7 +27,6 @@ class DebugFragment : SettingsBasePreferenceFragment() {
             "Edge_Filter" to 7,
             "Panel_Orientation" to 8,
             "Report_Rate" to 9,
-            "Super_Report" to 202,
         )
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {

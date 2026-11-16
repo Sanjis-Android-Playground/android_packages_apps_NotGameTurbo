@@ -5,20 +5,15 @@
 
 package com.grewal.notgamemode
 
-import android.os.Binder
-import android.os.IBinder
-import android.os.ServiceManager
 import android.util.Log
-import vendor.xiaomi.hw.touchfeature.ITouchFeature
+import vendor.xiaomi.hardware.touchfeature.V1_0.ITouchFeature
 
 object TouchFeatureManager {
 
     private const val TAG = "GameModeTouchFeature"
 
-    private const val TOUCH_ID = 0
-    private const val TOUCH_GAME_MODE = 0
-    private const val TOUCH_SUPER_REPORT = 202
-    private const val TOUCH_PANEL_ORIENTATION = 8
+    const val TOUCH_GAME_MODE = 0
+    const val TOUCH_PANEL_ORIENTATION = 8
 
     const val TOUCH_UP_THRESHOLD = 2
     const val TOUCH_TOLERANCE = 3
@@ -42,22 +37,10 @@ object TouchFeatureManager {
 
     @Volatile private var touchFeature: ITouchFeature? = null
 
-    private val deathRecipient =
-        IBinder.DeathRecipient {
-            Log.w(TAG, "touchfeature service died")
-            touchFeature = null
-        }
-
     @Synchronized
     private fun getService(): ITouchFeature? =
         touchFeature
-            ?: runCatching {
-                    val fqName = "${ITouchFeature.DESCRIPTOR}/default"
-                    val binder = Binder.allowBlocking(ServiceManager.waitForDeclaredService(fqName))
-                    ITouchFeature.Stub.asInterface(binder).apply {
-                        asBinder().linkToDeath(deathRecipient, 0)
-                    }
-                }
+            ?: runCatching { ITouchFeature.getService() }
                 .onSuccess { touchFeature = it }
                 .onFailure { e -> Log.e(TAG, "failed to get touchfeature service", e) }
                 .getOrNull()
@@ -71,18 +54,13 @@ object TouchFeatureManager {
                     Log.e(TAG, "touchfeature service is null, cannot set mode $mode")
                     return
                 }
-        runCatching { service.setModeValue(TOUCH_ID, mode, value) }
-            .onFailure { e -> Log.e(TAG, "setModeValue(mode=$mode, value=$value) failed", e) }
+        runCatching { service.setTouchMode(mode, value) }
+            .onFailure { e -> Log.e(TAG, "setTouchMode(mode=$mode, value=$value) failed", e) }
     }
 
     fun setGameMode(enabled: Boolean) {
         Log.i(TAG, "setGameMode: $enabled")
         setModeValue(TOUCH_GAME_MODE, if (enabled) 1 else 0)
-    }
-
-    fun setSuperReport(enabled: Boolean) {
-        Log.i(TAG, "setSuperReport: $enabled")
-        setModeValue(TOUCH_SUPER_REPORT, if (enabled) 1 else 0)
     }
 
     fun setPanelOrientation(rotation: Int) {
@@ -105,11 +83,11 @@ object TouchFeatureManager {
         fun <T> attempt(block: (ITouchFeature) -> T): T? =
             service?.let { runCatching { block(it) }.getOrNull() }
         return ModeQuery(
-            cur = attempt { it.getModeCurValue(TOUCH_ID, mode) },
-            def = attempt { it.getModeDefaultValue(TOUCH_ID, mode) },
-            min = attempt { it.getModeMinValue(TOUCH_ID, mode) },
-            max = attempt { it.getModeMaxValue(TOUCH_ID, mode) },
-            values = attempt { it.getModeValue(TOUCH_ID, mode).toList() },
+            cur = attempt { it.getTouchModeCurValue(mode) },
+            def = attempt { it.getTouchModeDefValue(mode) },
+            min = attempt { it.getTouchModeMinValue(mode) },
+            max = attempt { it.getTouchModeMaxValue(mode) },
+            values = attempt { it.getModeValues(mode)?.map { value -> value } },
         )
     }
 }
